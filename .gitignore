@@ -1,0 +1,44 @@
+[Bb]in/
+[Oo]bj/
+[Ll]ib/
+*.suo
+*.user
+*.vsmdi
+_Resharper*
+packages/
+*.trx
+
+# build output
+Libraries/
+Artifacts/
+Local Publish/
+CommonAssemblyInfo.cs
+
+*.dbmdl
+*.dbschema
+sql/Database/*/sql/*
+logs/
+debug/
+*.deploymentmanifest
+*.sqlcmdvars
+*.sqldeployment
+*.sqlsettings
+*.nupkg
+*.orig
+*.log
+output.txt
+PreCompiledWeb/
+*.scmp
+
+# unit test output
+TestResults.*.*.xml
+*.received.txt
+
+# runtime output
+PRISMPro/code/KORE.PRISMPro.UI/EnvironmentConfig/
+
+# Exceptions
+!prism_pro_api_3.0/PrismProAPI/Libraries/
+!prism_pro_api_3.0/PRiSMProAPI/App.config
+!prism_pro_api_3.0/PRiSMProAPI Client/app.config
+!prism_pro_api_3.0/PrismProAPI.Services/web.config
