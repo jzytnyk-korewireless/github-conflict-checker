@@ -42,3 +42,6 @@ PRISMPro/code/KORE.PRISMPro.UI/EnvironmentConfig/
 !prism_pro_api_3.0/PRiSMProAPI/App.config
 !prism_pro_api_3.0/PRiSMProAPI Client/app.config
 !prism_pro_api_3.0/PrismProAPI.Services/web.config
+
+# API Key
+ApiKey.txt

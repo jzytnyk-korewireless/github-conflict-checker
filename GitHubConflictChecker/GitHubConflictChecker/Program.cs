@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using RestSharp;
@@ -7,8 +8,14 @@ namespace GitHubConflictChecker
 {
     class Program
     {
+        private static string getApiKey()
+        {
+            var apiKey = File.ReadAllText("ApiKey.txt");
+            return apiKey;
+        }
         static void Main(string[] args)
         {
+            var apiKey = getApiKey();
             var client = new RestClient(@"https://api.github.com");
 
             var request = new RestRequest("/repos/{owner}/{repo}/pulls", Method.GET);
@@ -31,12 +38,13 @@ namespace GitHubConflictChecker
                 if (detailsResponse.Mergeable == false)
                 {
                     var request3 = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.POST);
+                    request3.AddParameter("Authorization", "token " + apiKey,ParameterType.HttpHeader);
                     request3.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
                     request3.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
                     request3.AddUrlSegment("number", pr.Number.ToString());
                     request3.RequestFormat = DataFormat.Json;
                     request3.AddBody(new { body = "test" });
-                    client.Execute(request3);
+                    var response3 = client.Execute(request3);
                 }
 
                 return detailsResponse;
