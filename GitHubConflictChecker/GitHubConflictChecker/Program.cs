@@ -23,17 +23,25 @@ namespace GitHubConflictChecker
                 var request2 = new RestRequest("/repos/{owner}/{repo}/pulls/{number}");
 
                 request2.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
-                request2.AddUrlSegment("repo", "github-conflict-checker");
-                // replaces matching token in request.Resource
+                request2.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
                 request2.AddUrlSegment("number", pr.Number.ToString());
 
-                var detailsResponse = client.Execute<PullRequestDetail>(request2);
+                var detailsResponse = client.Execute<PullRequestDetail>(request2).Data;
 
-                return detailsResponse.Data;
+                if (detailsResponse.Mergeable == false)
+                {
+                    var request3 = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.POST);
+                    request3.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
+                    request3.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
+                    request3.AddUrlSegment("number", pr.Number.ToString());
+                    request3.RequestFormat = DataFormat.Json;
+                    request3.AddBody(new { body = "test" });
+                    client.Execute(request3);
+                }
+
+                return detailsResponse;
             })
                 .ToList();
-
-            //GET /repos/:owner/:repo/pulls/:number
         }
     }
 

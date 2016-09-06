@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubConflictChecker", "GitHubConflictChecker\GitHubConflictChecker.csproj", "{DB0886F5-5241-457C-8A06-7322BA9F6009}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubConflictChecker.Tests", "GitHubConflictChecker.Tests\GitHubConflictChecker.Tests.csproj", "{3B85FA07-3958-464A-9325-ECEF69A1870A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DB0886F5-5241-457C-8A06-7322BA9F6009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB0886F5-5241-457C-8A06-7322BA9F6009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB0886F5-5241-457C-8A06-7322BA9F6009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B85FA07-3958-464A-9325-ECEF69A1870A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B85FA07-3958-464A-9325-ECEF69A1870A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B85FA07-3958-464A-9325-ECEF69A1870A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B85FA07-3958-464A-9325-ECEF69A1870A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
