@@ -7,7 +7,7 @@ using RestSharp;
 
 namespace GitHubConflictChecker
 {
-    class Program
+    internal class Program
     {
         private static string getApiKey()
         {
@@ -17,7 +17,7 @@ namespace GitHubConflictChecker
 
         private static string prUnMergeableComment = "This PR is unmergeable!";
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var apiKey = getApiKey();
             var client = new RestClient(@"https://api.github.com");
@@ -34,31 +34,37 @@ namespace GitHubConflictChecker
                 var request2 = new RestRequest("/repos/{owner}/{repo}/pulls/{number}");
 
                 request2.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
-                request2.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
+                request2.AddUrlSegment("repo", "github-conflict-checker");
+                    // replaces matching token in request.Resource
                 request2.AddUrlSegment("number", pr.Number.ToString());
 
                 var pullRequestDetail = client.Execute<PullRequestDetail>(request2).Data;
 
                 if (pullRequestDetail.Mergeable == false)
                 {
-                    var getComments = new RestRequest("/repos/{owner}/{repo}/pulls/{number}/comments", Method.GET);
+                    var getComments = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.GET);
                     getComments.AddParameter("Authorization", "token " + apiKey, ParameterType.HttpHeader);
-                    getComments.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
-                    getComments.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
+                    getComments.AddUrlSegment("owner", "dalpert-korewireless");
+                        // replaces matching token in request.Resource
+                    getComments.AddUrlSegment("repo", "github-conflict-checker");
+                        // replaces matching token in request.Resource
                     getComments.AddUrlSegment("number", pr.Number.ToString());
                     getComments.RequestFormat = DataFormat.Json;
-                    var comments = client.Execute(getComments);
+                    var comments = client.Execute<List<Comment>>(getComments).Data;
 
-                    if (false)
+                    if (NeedToBeNotified(comments))
                     {
                         var request3 = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.POST);
                         request3.AddParameter("Authorization", "token " + apiKey, ParameterType.HttpHeader);
-                        request3.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
-                        request3.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
+                        request3.AddUrlSegment("owner", "dalpert-korewireless");
+                            // replaces matching token in request.Resource
+                        request3.AddUrlSegment("repo", "github-conflict-checker");
+                            // replaces matching token in request.Resource
                         request3.AddUrlSegment("number", pr.Number.ToString());
                         request3.RequestFormat = DataFormat.Json;
-                        request3.AddBody(new { body = string.Format("{0} @{1}", prUnMergeableComment, pullRequestDetail.User.Login) });
-                        var response3 = client.Execute(request3);            
+                        request3.AddBody(
+                            new {body = string.Format("{0} @{1}", prUnMergeableComment, pullRequestDetail.User.Login)});
+                        var response3 = client.Execute(request3);
                     }
 
 
@@ -68,21 +74,13 @@ namespace GitHubConflictChecker
             })
                 .ToList();
         }
-        //private static bool NeedToBeNotified(PullRequestDetail prDetail, Pulls pr)
-        //{
-        //    var apiKey = getApiKey();
-        //    var request = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.GET);
-        //    request.AddParameter("Authorization", "token " + apiKey, ParameterType.HttpHeader);
-        //    request.AddUrlSegment("owner", "dalpert-korewireless"); // replaces matching token in request.Resource
-        //    request.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
-        //    request.AddUrlSegment("number", pr.Number.ToString());
-        //    request.RequestFormat = DataFormat.Json;
-        //    var response = client.Execute(request);  
 
-        //    return false;
-        //}
+        private static bool NeedToBeNotified(IList<Comment> comments)
+        {
+            return comments.Any() && !comments.Last().Body.Contains(prUnMergeableComment);
+        }
+
     }
-
 
     internal class User
     {
@@ -97,6 +95,7 @@ namespace GitHubConflictChecker
     internal class Comment
     {
         public int Id { get; set; }
+        public string Body { get; set; }
     }
     public class Pulls
     {
