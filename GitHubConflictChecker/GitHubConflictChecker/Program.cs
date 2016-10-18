@@ -33,9 +33,9 @@ namespace GitHubConflictChecker
                 request2.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
                 request2.AddUrlSegment("number", pr.Number.ToString());
 
-                var detailsResponse = client.Execute<PullRequestDetail>(request2).Data;
+                var pullRequestDetail = client.Execute<PullRequestDetail>(request2).Data;
 
-                if (detailsResponse.Mergeable == false)
+                if (pullRequestDetail.Mergeable == false)
                 {
                     var request3 = new RestRequest("/repos/{owner}/{repo}/issues/{number}/comments", Method.POST);
                     request3.AddParameter("Authorization", "token " + apiKey,ParameterType.HttpHeader);
@@ -43,19 +43,23 @@ namespace GitHubConflictChecker
                     request3.AddUrlSegment("repo", "github-conflict-checker"); // replaces matching token in request.Resource
                     request3.AddUrlSegment("number", pr.Number.ToString());
                     request3.RequestFormat = DataFormat.Json;
-                    request3.AddBody(new { body = "test" });
+                    request3.AddBody(new { body = string.Format("There is a PR that is unmergeable! @{0}",pullRequestDetail.User.Login) });
                     var response3 = client.Execute(request3);
                 }
 
-                return detailsResponse;
+                return pullRequestDetail;
             })
                 .ToList();
         }
     }
-
+    internal class User
+    {
+        public string Login{ get; set; }
+    }
     internal class PullRequestDetail
     {
         public bool Mergeable { get; set; }
+        public User User { get; set; }
     }
 
     public class Pulls
